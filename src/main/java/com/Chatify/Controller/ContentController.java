@@ -1,36 +1,39 @@
 package com.Chatify.Controller;
+import java.security.Principal;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.Chatify.Repository.MyAppRepository;
-import com.Chatify.Repository.UserRepository;
+
+import com.Chatify.Model.Users;
+import com.Chatify.Service.UserService;
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 public class ContentController {
 
     @Autowired
-    private MyAppRepository repo;
+    private UserService service;
 
-    @Autowired
-    private UserRepository userRepository;
-
- @GetMapping("/first")
-    public String First(){
-        return "Hello Ronniee Welcome to Page!";
-    }
-
-    @GetMapping("/second")
-    public String Second(){
-        return  "Hello Welcome Guest";
-    }
-
-    @GetMapping("/getInfo")
+    //api to get personal information
+    @GetMapping("/me")
     public ResponseEntity<?> getInfo()
     {
         String username=SecurityContextHolder.getContext().getAuthentication().getName();
-        return ResponseEntity.ok(userRepository.findUserByEmail(username));
+        return ResponseEntity.ok(service.getInfo(username));
     }
+
+        // api to search the user with excluding self one
+    @GetMapping("/search")
+    public List<Users> SearchUser(@RequestParam String username,Principal principal) {
+
+        return service.SearchUsers(username,principal.getName());
+    }
+
+
+    
 }

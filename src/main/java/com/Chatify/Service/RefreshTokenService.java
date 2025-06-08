@@ -4,10 +4,8 @@ import java.time.Instant;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.Chatify.Model.Myappuser;
 import com.Chatify.Model.RefreshToken;
 import com.Chatify.Model.Users;
-import com.Chatify.Repository.MyAppRepository;
 import com.Chatify.Repository.RefreshTokenRepo;
 import com.Chatify.Repository.UserRepository;
 
@@ -16,9 +14,6 @@ public class RefreshTokenService {
 
     @Autowired
     private RefreshTokenRepo refreshTokenRepo;
-
-    @Autowired
-    private MyAppRepository userRepo;
 
     @Autowired
     private UserRepository userRepository;

@@ -1,4 +1,6 @@
 package com.Chatify.Controller;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,12 +16,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.Chatify.Model.Myappuser;
 import com.Chatify.Model.RefreshToken;
 import com.Chatify.Model.Users;
 import com.Chatify.Security.JwtUtill;
 import com.Chatify.Service.Myappservicee;
 import com.Chatify.Service.RefreshTokenService;
+import com.Chatify.Service.UserService;
+
 import lombok.Data;
 
 @RestController
@@ -36,8 +39,11 @@ public class AuthController {
     @Autowired
     private RefreshTokenService refreshTokenService;
 
-    @Autowired
-    private Myappservicee myappservicee;
+    // @Autowired
+    // private Myappservicee myappservicee;
+      
+       @Autowired
+       private UserService userService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -55,7 +61,8 @@ public class AuthController {
     public Users createUser(@RequestBody  Users user)
     {   
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            return myappservicee.createUser(user);
+            // user.setCreatedAt(LocalDateTime.now());
+            return userService.createUser(user);
     }
 
 
