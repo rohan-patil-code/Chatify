@@ -81,7 +81,7 @@ public JwtUtill jwtUtill() {
             .csrf(csrf -> csrf.disable())
             .authorizeRequests(auth -> auth
 
-                .requestMatchers("/api/auth/signup","/api/auth/login","/api/auth/refresh-token","/api/auth/logout","/css/**","/js/**").permitAll()
+                .requestMatchers("/api/auth/signup","/api/auth/login","/api/auth/refresh-token","/api/auth/logout","/api/chats","/css/**","/js/**").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

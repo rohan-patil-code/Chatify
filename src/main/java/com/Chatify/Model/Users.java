@@ -22,11 +22,11 @@ public class Users {
     private String password;
 
     @Column(name = "avatar_url", length = 255)
-    private String avatarUrl; // Optional field — no `nullable = false`
+    private String avatarUrl; 
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "ENUM('ONLINE','OFFLINE','AWAY') DEFAULT 'OFFLINE'")
-    private Status status = Status.OFFLINE; // Set default in Java too (for safety)
+    private Status status = Status.OFFLINE; 
 
     @Column(name = "last_seen")
     private LocalDateTime lastSeen;
