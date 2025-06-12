@@ -1,5 +1,6 @@
 package com.Chatify.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,11 +9,15 @@ import org.springframework.stereotype.Service;
 
 import com.Chatify.DTO.MessageRequest;
 import com.Chatify.DTO.MessageResponse;
+import com.Chatify.DTO.MessageStatusUpdateRequest;
 import com.Chatify.Model.Chat;
+import com.Chatify.Model.MessageStatus;
+import com.Chatify.Model.MessageStatusType;
 import com.Chatify.Model.Messages;
 import com.Chatify.Model.Users;
 import com.Chatify.Repository.ChatRepository;
 import com.Chatify.Repository.MessageRepository;
+import com.Chatify.Repository.MessageStatusRepository;
 import com.Chatify.Repository.UserRepository;
 
 @Service
@@ -24,6 +29,10 @@ public class MessagesService {
     private ChatRepository chatRepository;
       @Autowired
     private UserRepository userRepository;
+
+     @Autowired
+    private MessageStatusRepository messageStatusRepository;
+
 
 
 
@@ -60,5 +69,14 @@ public class MessagesService {
                 return res;
             }).collect(Collectors.toList());
     }
+
+     public void updateMessageStatus(MessageStatusUpdateRequest dto) {
+    MessageStatus status = new MessageStatus();
+    status.setMessage(messageRepository.findById(dto.getMessageId()).orElseThrow());
+    status.setUser(userRepository.findById(dto.getUserId()).orElseThrow());
+    status.setStatus(MessageStatusType.valueOf(dto.getStatus()));
+    status.setTimestamp(LocalDateTime.now());
+    messageStatusRepository.save(status);
+}
 
 }

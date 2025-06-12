@@ -1,6 +1,7 @@
 package com.Chatify.Service;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,13 +16,18 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.Chatify.DTO.ChatDTO;
 import com.Chatify.DTO.ChatMapper;
+import com.Chatify.DTO.MessageStatusUpdateRequest;
 import com.Chatify.DTO.UserDTO;
 import com.Chatify.Model.Chat;
 import com.Chatify.Model.ChatParticipant;
+import com.Chatify.Model.MessageStatus;
+import com.Chatify.Model.MessageStatusType;
 import com.Chatify.Model.ROLE;
 import com.Chatify.Model.Users;
 import com.Chatify.Repository.ChatParticipantRepository;
 import com.Chatify.Repository.ChatRepository;
+import com.Chatify.Repository.MessageRepository;
+import com.Chatify.Repository.MessageStatusRepository;
 import com.Chatify.Repository.UserRepository;
 
 @Service
@@ -33,6 +39,10 @@ public class ChatService {
 
     @Autowired
     private UserRepository userRepository;
+
+   
+    
+   
 
     public List<ChatDTO> getUserChats(Long userid) {
         System.out.println("-----------debuging service layer of chat" + userid);
@@ -143,5 +153,8 @@ public class ChatService {
 
             return ChatMapper.toDTO(chat, participantsDTOs);
     }
+
+   
+
 
 }
