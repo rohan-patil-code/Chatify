@@ -1,4 +1,5 @@
 package com.Chatify.Service;
+
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,32 +17,25 @@ import com.Chatify.Repository.UserRepository;
 @Service
 public class Myappservicee implements UserDetailsService {
 
-       @Autowired
+    @Autowired
     private UserRepository userRepository;
 
-    
-   @Override
-public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-    Optional<Users> user = userRepository.findUserByEmail(email);
+        Optional<Users> user = userRepository.findUserByEmail(email);
 
-    if (user.isPresent()) {
-        var userObj = user.get();
-        return new UserPrincipal(
-            userObj.getUserId(),
-            userObj.getEmail(),
-            userObj.getPassword()
-          
-        );
-    } else {
-        throw new UsernameNotFoundException(email);
+        if (user.isPresent()) {
+            var userObj = user.get();
+            return new UserPrincipal(
+                    userObj.getUserId(),
+                    userObj.getEmail(),
+                    userObj.getPassword()
+
+            );
+        } else {
+            throw new UsernameNotFoundException(email);
+        }
     }
-}
-
-    
-
-
-
-
 
 }

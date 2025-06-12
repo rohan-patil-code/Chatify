@@ -31,9 +31,11 @@ public class RefreshToken {
     @Column(name = "created_at", updatable = false)
     private Instant createdAt = Instant.now();
 
+    
     // No-argument constructor
     public RefreshToken() {
     }
+
 
     // Getters and Setters
 

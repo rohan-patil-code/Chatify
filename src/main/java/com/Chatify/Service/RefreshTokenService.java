@@ -18,53 +18,43 @@ public class RefreshTokenService {
     @Autowired
     private UserRepository userRepository;
 
+    public boolean deleteRefreshToken(String token) {
+        Optional<RefreshToken> refreshTokenop = refreshTokenRepo.findByToken(token);
 
-   public boolean deleteRefreshToken(String token)
-   {
-    Optional<RefreshToken> refreshTokenop=refreshTokenRepo.findByToken(token);
-    
-        if(refreshTokenop.isPresent())
-        {
+        if (refreshTokenop.isPresent()) {
             refreshTokenRepo.delete(refreshTokenop.get());
-
 
             return true;
         }
         return false;
-   }
+    }
 
-   public RefreshToken saveRefToken(String email,String token)
-   {
-         Users user = userRepository.findUserByEmail(email)
+    public RefreshToken saveRefToken(String email, String token) {
+        Users user = userRepository.findUserByEmail(email)
 
-            .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         RefreshToken ref = new RefreshToken();
         ref.setUser(user);
         ref.setToken(token);
         ref.setCreatedAt(Instant.now());
-        ref.setExpiresAt(Instant.now().plusSeconds(60*60*24*7));
+        ref.setExpiresAt(Instant.now().plusSeconds(60 * 60 * 24 * 7));
 
         return refreshTokenRepo.save(ref);
-   }
-
-   public Optional<RefreshToken> findByToken(String token)
-   {
-    return refreshTokenRepo.findByToken(token);
-   }
-
-   public boolean isExpired(RefreshToken token)
-   {
-    return token.getExpiresAt().isBefore(Instant.now());
-   }
-
-   public void deleteIfExpired(RefreshToken token)
-   {
-    if(isExpired(token))
-    {
-        refreshTokenRepo.delete(token);
     }
-   }
 
-    
+    public Optional<RefreshToken> findByToken(String token) {
+        return refreshTokenRepo.findByToken(token);
+    }
+
+    public boolean isExpired(RefreshToken token) {
+        return token.getExpiresAt().isBefore(Instant.now());
+    }
+
+    public void deleteIfExpired(RefreshToken token) {
+        if (isExpired(token)) {
+            refreshTokenRepo.delete(token);
+        }
+    }
+
 }
