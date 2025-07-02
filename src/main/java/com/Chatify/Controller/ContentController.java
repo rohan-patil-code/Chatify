@@ -4,20 +4,26 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.Chatify.DTO.SearchUserDTO;
 import com.Chatify.DTO.UpdateProfile;
 import com.Chatify.DTO.UpdateStatusRequestt;
+import com.Chatify.DTO.UserDTO;
+import com.Chatify.DTO.UserSummaryDTO;
 import com.Chatify.Model.Users;
 import com.Chatify.Service.UserService;
 
 
 @RestController
 @RequestMapping("/api/users")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ContentController {
 
     @Autowired
@@ -32,12 +38,12 @@ public class ContentController {
     }
 
 
-        // api to search the user with excluding self one
+//         api to search the user with excluding self one
     @GetMapping("/search")
-    public List<Users> SearchUser(@RequestParam String username,Principal principal) {
-
-        return service.SearchUsers(username,principal.getName());
+    public List<UserDTO> searchUsers(@RequestParam("username") String username) {
+        return service.searchUsers(username);
     }
+
 
 
     @PatchMapping("/status")

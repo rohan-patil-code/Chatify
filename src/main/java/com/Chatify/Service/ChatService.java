@@ -69,18 +69,31 @@ public class ChatService {
                 .collect(Collectors.toList());
     }
 
-    public ChatDTO createIndividualChat(Long senderId, Long receiverId) {
-        List<ChatParticipant> senderChats = chatParticipantRepository.findByUser_UserId(senderId);
+    public ChatDTO createIndividualChat(String senderUsername, Long receiverId) {
+        if (receiverId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Receiver ID must not be null");
+        }
+
+        Users sender = userRepository.findByUsername(senderUsername)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sender not found"));
+
+        Users receiver = userRepository.findById(receiverId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Receiver not found"));
+
+        if (sender.getUserId().equals(receiverId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You cannot chat with yourself");
+        }
+
+        // Check existing chat
+        List<ChatParticipant> senderChats = chatParticipantRepository.findByUser_UserId(sender.getUserId());
+
         for (ChatParticipant cp : senderChats) {
             Chat chat = cp.getChat();
-
             if (!chat.isGroup()) {
                 List<ChatParticipant> participants = chatParticipantRepository.findByChat_Id(chat.getId());
-
-                boolean receiver = participants.stream()
-                        .anyMatch(p -> p.getUser().getUserId().equals(receiverId));
-
-                if (receiver && participants.size() == 2) {
+                boolean receiverExists = participants.stream()
+                    .anyMatch(p -> p.getUser().getUserId().equals(receiverId));
+                if (receiverExists && participants.size() == 2) {
                     return ChatMapper.toDTO(chat, participants.stream()
                             .map(p -> ChatMapper.toDTO(p.getUser()))
                             .collect(Collectors.toList()));
@@ -88,17 +101,14 @@ public class ChatService {
             }
         }
 
-        // for creating new chat
+        // Create new chat
         Chat chat = new Chat();
         chat.setGroup(false);
-        chat.setName("Chat with" + receiverId);
+        chat.setName("Chat with " + receiver.getUsername());
         chatRepository.save(chat);
 
-        // Adding both users as chat participants
-        Users sender = userRepository.findById(senderId).orElseThrow();
-        Users receiver = userRepository.findById(receiverId).orElseThrow();
-
         Timestamp now = new Timestamp(System.currentTimeMillis());
+
         ChatParticipant cp1 = new ChatParticipant();
         cp1.setChat(chat);
         cp1.setUser(sender);
@@ -114,10 +124,15 @@ public class ChatService {
         chatParticipantRepository.save(cp1);
         chatParticipantRepository.save(cp2);
 
-        List<UserDTO> users = List.of(ChatMapper.toDTO(sender), ChatMapper.toDTO(receiver));
+        List<UserDTO> participantsDTO = List.of(
+            ChatMapper.toDTO(sender),
+            ChatMapper.toDTO(receiver)
+        );
 
-        return ChatMapper.toDTO(chat, users);
+        return ChatMapper.toDTO(chat, participantsDTO);
     }
+
+
 
     public ChatDTO createGroupChat(String name, List<Long> participantIDs) {
         Chat chat = new Chat();

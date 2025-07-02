@@ -1,9 +1,13 @@
 package com.Chatify.Service;
 
+import com.Chatify.DTO.SearchUserDTO;
 import com.Chatify.DTO.UpdateProfile;
+import com.Chatify.DTO.UserDTO;
+import com.Chatify.DTO.UserSummaryDTO;
 import com.Chatify.Model.Status;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,12 +33,13 @@ public class UserService {
     }
 
     // service logic for search user
-    public List<Users> SearchUsers(String name, String currentEmail) {
-        Users currentUser = userRepository.findUserByEmail(currentEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+//     public List<UserSummaryDTO> SearchUsers(String name, String currentEmail) {
+//     Users currentUser = userRepository.findUserByEmail(currentEmail)
+//         .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+//
+//     return userRepository.searchUserSummaries(name, currentUser.getUserId());
+// }
 
-        return userRepository.findByUsernameContainingIgnoreCaseAndUserIdNot(name, currentUser.getUserId());
-    }
 
     // service logic for update user status ex: ONLINE,OFLINE,AWAY
     public void updateUserStatus(String email, Status status) {
@@ -55,6 +60,17 @@ public class UserService {
         }
 
         userRepository.save(user);
+    }
+    
+    public List<UserDTO> searchUsers(String username) {
+        List<Users> users = userRepository.findByUsernameContainingIgnoreCase(username);
+        return users.stream().map(user -> {
+            UserDTO dto = new UserDTO();
+            dto.setUserId(user.getUserId());
+            dto.setUsername(user.getUsername());
+            dto.setAvatarurl(user.getAvatarUrl()); // ensure this field exists in `User` model
+            return dto;
+        }).collect(Collectors.toList());
     }
 
 }
